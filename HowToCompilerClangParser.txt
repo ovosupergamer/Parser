@@ -4,7 +4,7 @@ Cmake:
 
 cmake_minimum_required(VERSION 3.20)
 
-project(MyParser)
+project(MeuParser LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -12,31 +12,57 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(LLVM REQUIRED CONFIG)
 find_package(Clang REQUIRED CONFIG)
 
-message(STATUS "LLVM version: ${LLVM_PACKAGE_VERSION}")
+message(STATUS "LLVM Version: ${LLVM_PACKAGE_VERSION}")
 
-include_directories(
-    ${LLVM_INCLUDE_DIRS}
-    ${CLANG_INCLUDE_DIRS}
+list(APPEND CMAKE_MODULE_PATH "${LLVM_CMAKE_DIR}")
+include(HandleLLVMOptions)
+
+llvm_map_components_to_libnames(LLVM_LIBS
+    Support
+    Core
 )
-
-add_definitions(${LLVM_DEFINITIONS})
 
 add_executable(MeuParser
     main.cpp
 )
 
-target_link_libraries(MeuParser
+target_include_directories(MeuParser PRIVATE
+    ${LLVM_INCLUDE_DIRS}
+    ${CLANG_INCLUDE_DIRS}
+)
+
+target_compile_definitions(MeuParser PRIVATE
+    ${LLVM_DEFINITIONS}
+)
+
+target_link_libraries(MeuParser PRIVATE
+    ${LLVM_LIBS}
+
     clangTooling
-    clangBasic
-    clangAST
+    clangToolingCore
+
     clangFrontend
-    clangSerialization
+    clangFrontendTool
+
     clangDriver
+    clangSerialization
+
+    clangAST
+    clangASTMatchers
+
+    clangBasic
+    clangLex
     clangParse
     clangSema
+
     clangEdit
-    clangLex
-    clangASTMatchers
+
+    clangAnalysis
+
+    clangRewrite
+    clangRewriteFrontend
+
+    clangIndex
 )
 
 
