@@ -71,8 +71,8 @@ target_link_libraries(MeuParser PRIVATE
 
 gerar build:
 
-cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake -S . -B build -G "Visual Studio 18 2026" -A x64 -DLLVM_DIR="C:\LLVM22\lib\cmake\llvm" -DClang_DIR="C:\LLVM22\lib\cmake\clang"
 
 compilar:
 
-cmake --build . --config Release
+cmake --build build --config Release
